@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve FizhNetFlow
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/root/gui_app
+Environment="PATH=/root/gui_app/venv/bin"
+ExecStart=/root/gui_app/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:5050 app:app
+
+[Install]
+WantedBy=multi-user.target

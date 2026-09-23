@@ -1,0 +1,151 @@
+[
+    {
+        "id": "t1",
+        "name": "PC-Hari Sekolah",
+        "sessions": [
+            {
+                "start": "06:00",
+                "end": "08:00"
+            },
+            {
+                "start": "13:00",
+                "end": "16:30"
+            },
+            {
+                "start": "19:30",
+                "end": "21:30"
+            }
+        ]
+    },
+    {
+        "id": "t2",
+        "name": "PC-Menjelang Libur",
+        "sessions": [
+            {
+                "start": "06:00",
+                "end": "08:00"
+            },
+            {
+                "start": "13:00",
+                "end": "16:30"
+            },
+            {
+                "start": "19:30",
+                "end": "23:59"
+            }
+        ]
+    },
+    {
+        "id": "t3",
+        "name": "PC-Hari Libur",
+        "sessions": [
+            {
+                "start": "10:00",
+                "end": "12:00"
+            },
+            {
+                "start": "13:30",
+                "end": "16:30"
+            },
+            {
+                "start": "20:00",
+                "end": "23:59"
+            }
+        ]
+    },
+    {
+        "id": "t4",
+        "name": "PC-Menjelang Sekolah",
+        "sessions": [
+            {
+                "start": "10:00",
+                "end": "11:59"
+            },
+            {
+                "start": "13:30",
+                "end": "16:30"
+            },
+            {
+                "start": "19:30",
+                "end": "21:30"
+            }
+        ]
+    },
+    {
+        "id": "t1790161153396",
+        "name": "HP-Hari Sekolah",
+        "sessions": [
+            {
+                "start": "06:30",
+                "end": "08:30"
+            },
+            {
+                "start": "13:00",
+                "end": "17:00"
+            },
+            {
+                "start": "19:30",
+                "end": "22:00"
+            }
+        ]
+    },
+    {
+        "id": "t1790163446195",
+        "name": "HP-Menjelang Libur",
+        "sessions": [
+            {
+                "start": "06:30",
+                "end": "20:30"
+            },
+            {
+                "start": "13:00",
+                "end": "17:00"
+            },
+            {
+                "start": "19:30",
+                "end": "00:30"
+            }
+        ]
+    },
+    {
+        "id": "t1790163587331",
+        "name": "HP-Hari Libur",
+        "sessions": [
+            {
+                "start": "10:00",
+                "end": "12:30"
+            },
+            {
+                "start": "13:30",
+                "end": "17:00"
+            },
+            {
+                "start": "20:00",
+                "end": "01:30"
+            }
+        ]
+    },
+    {
+        "id": "t1790163753330",
+        "name": "HP-Menjelang Sekolah",
+        "sessions": [
+            {
+                "start": "10:00",
+                "end": "12:30"
+            },
+            {
+                "start": "13:30",
+                "end": "17:00"
+            },
+            {
+                "start": "19:30",
+                "end": "22:00"
+            }
+        ]
+    },
+    {
+        "id": "t1790163767549",
+        "name": "BLOKIR SEMUA",
+        "sessions": []
+    }
+]

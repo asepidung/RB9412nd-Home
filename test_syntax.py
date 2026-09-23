@@ -1,0 +1,10 @@
+import paramiko
+client = paramiko.SSHClient()
+client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+client.connect('192.168.88.1', port=22, username='idung', password='91142552', timeout=5, look_for_keys=False, allow_agent=False)
+stdin, stdout, stderr = client.exec_command('/ip firewall filter add chain=forward src-mac-address=6C:4C:BC:88:EE:F8 action=accept time=06:00:00-08:00:00,mon,thu,tue,wed comment="FizhNetFlow_Allow_PC"')
+err = stderr.read().decode()
+if err: print('ERROR:', err)
+else: print('SUCCESS')
+client.exec_command('/ip firewall filter remove [find comment="FizhNetFlow_Allow_PC"]')
+client.close()
