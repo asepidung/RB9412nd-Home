@@ -83,7 +83,9 @@ def index():
 def login():
     error = None
     if request.method == 'POST':
-        if request.form['username'] == 'admin' and request.form['password'] == 'admin123':
+        app_user = os.getenv('APP_USER', 'admin')
+        app_pass = os.getenv('APP_PASS', 'admin123')
+        if request.form['username'] == app_user and request.form['password'] == app_pass:
             session['logged_in'] = True
             return redirect(url_for('index'))
         else:
@@ -246,21 +248,26 @@ def api_apply():
     
     # 1. CLEANUP OLD RULES
     cmds.append('/ip firewall filter remove [find comment~"^FizhNetFlow_"]')
+    cmds.append('/ip firewall filter remove [find chain=fizhnetflow]')
+    
+    # 1.5 SETUP FIZHNETFLOW CHAIN
+    cmds.append('/ip firewall filter add chain=forward action=jump jump-target=fizhnetflow comment="FizhNetFlow_Jump"')
+    cmds.append('/ip firewall filter move [find comment="FizhNetFlow_Jump"] 0')
     
     # 2. APPLY KILL SWITCHES (Highest Priority)
     if not status.get('pc_hafizh', True):
         for mac in PC_MACS:
             if mac.strip():
-                cmds.append(f'/ip firewall filter add chain=forward src-mac-address={mac.strip()} action=drop comment="FizhNetFlow_Kill_PC"')
+                cmds.append(f'/ip firewall filter add chain=fizhnetflow src-mac-address={mac.strip()} action=drop comment="FizhNetFlow_Kill_PC"')
                 
     if not status.get('hp_hafizh', True):
         for mac in HP_MACS:
             if mac.strip():
-                cmds.append(f'/ip firewall filter add chain=forward src-mac-address={mac.strip()} action=drop comment="FizhNetFlow_Kill_HP"')
+                cmds.append(f'/ip firewall filter add chain=fizhnetflow src-mac-address={mac.strip()} action=drop comment="FizhNetFlow_Kill_HP"')
                 
     # 3. APPLY BLOCKED CONNECTED DEVICES
     for mac in blocked_macs:
-        cmds.append(f'/ip firewall filter add chain=forward src-mac-address={mac} action=drop comment="FizhNetFlow_Blocked_Device"')
+        cmds.append(f'/ip firewall filter add chain=fizhnetflow src-mac-address={mac} action=drop comment="FizhNetFlow_Blocked_Device"')
 
     # 3.5 POPULATE WHATSAPP ADDRESS LIST (Dynamic IPs)
     cmds.append('/ip firewall address-list remove [find list="WhatsApp_IPs"]')
@@ -307,37 +314,37 @@ def api_apply():
                     for mac in target_macs:
                         if mac.strip():
                             # Part 1 (Current Day)
-                            cmds.append(f'/ip firewall filter add chain=forward src-mac-address={mac.strip()} action=accept time={start_str}-{end_str_1},{days_str} comment="FizhNetFlow_Allow_{comment_suffix}"')
+                            cmds.append(f'/ip firewall filter add chain=fizhnetflow src-mac-address={mac.strip()} action=return time={start_str}-{end_str_1},{days_str} comment="FizhNetFlow_Allow_{comment_suffix}"')
                             # Part 2 (Next Day Spillover)
-                            cmds.append(f'/ip firewall filter add chain=forward src-mac-address={mac.strip()} action=accept time=00:00:00-{end_str_2},{next_days_str} comment="FizhNetFlow_Allow_Spillover_{comment_suffix}"')
+                            cmds.append(f'/ip firewall filter add chain=fizhnetflow src-mac-address={mac.strip()} action=return time=00:00:00-{end_str_2},{next_days_str} comment="FizhNetFlow_Allow_Spillover_{comment_suffix}"')
                 else:
                     # Normal session
                     end_str = end + ":59" if end == "23:59" else end + ":00"
                     for mac in target_macs:
                         if mac.strip():
-                            cmds.append(f'/ip firewall filter add chain=forward src-mac-address={mac.strip()} action=accept time={start_str}-{end_str},{days_str} comment="FizhNetFlow_Allow_{comment_suffix}"')
+                            cmds.append(f'/ip firewall filter add chain=fizhnetflow src-mac-address={mac.strip()} action=return time={start_str}-{end_str},{days_str} comment="FizhNetFlow_Allow_{comment_suffix}"')
 
         # WHATSAPP & DNS BYPASS (Always allow WA even outside schedule)
         for mac in target_macs:
             if mac.strip():
                 # Allow DNS (Crucial for WA to find its servers if using external DNS)
-                cmds.append(f'/ip firewall filter add chain=forward src-mac-address={mac.strip()} protocol=udp dst-port=53 action=accept comment="FizhNetFlow_Allow_DNS_{comment_suffix}"')
+                cmds.append(f'/ip firewall filter add chain=fizhnetflow src-mac-address={mac.strip()} protocol=udp dst-port=53 action=return comment="FizhNetFlow_Allow_DNS_{comment_suffix}"')
                 
                 # Allow WA Chat Ports
-                cmds.append(f'/ip firewall filter add chain=forward src-mac-address={mac.strip()} protocol=tcp dst-port=5222,5223,5228,4244,5242 action=accept comment="FizhNetFlow_Allow_WA_Chat_{comment_suffix}"')
+                cmds.append(f'/ip firewall filter add chain=fizhnetflow src-mac-address={mac.strip()} protocol=tcp dst-port=5222,5223,5228,4244,5242 action=return comment="FizhNetFlow_Allow_WA_Chat_{comment_suffix}"')
                 
                 # Allow WA Calls (UDP STUN & Media)
-                cmds.append(f'/ip firewall filter add chain=forward src-mac-address={mac.strip()} protocol=udp dst-port=3478,45395,50318,59234 action=accept comment="FizhNetFlow_Allow_WA_Call_{comment_suffix}"')
+                cmds.append(f'/ip firewall filter add chain=fizhnetflow src-mac-address={mac.strip()} protocol=udp dst-port=3478,45395,50318,59234 action=return comment="FizhNetFlow_Allow_WA_Call_{comment_suffix}"')
                 
                 # Allow WhatsApp IP ranges based on known Facebook/WA ASNs (Simplified for Home use)
                 # Instead of tls-host (which drops TCP SYN), we use a widely known WA subnet trick or Address List
-                cmds.append(f'/ip firewall filter add chain=forward src-mac-address={mac.strip()} dst-address-list=WhatsApp_IPs action=accept comment="FizhNetFlow_Allow_WA_Media_{comment_suffix}"')
+                cmds.append(f'/ip firewall filter add chain=fizhnetflow src-mac-address={mac.strip()} dst-address-list=WhatsApp_IPs action=return comment="FizhNetFlow_Allow_WA_Media_{comment_suffix}"')
 
         # Finally, drop ALL other traffic for this target that didn't match the allowed times
         # This acts as the default block if not inside a schedule.
         for mac in target_macs:
             if mac.strip():
-                cmds.append(f'/ip firewall filter add chain=forward src-mac-address={mac.strip()} action=drop comment="FizhNetFlow_Drop_{comment_suffix}_Outside_Schedule"')
+                cmds.append(f'/ip firewall filter add chain=fizhnetflow src-mac-address={mac.strip()} action=drop comment="FizhNetFlow_Drop_{comment_suffix}_Outside_Schedule"')
 
     # Build for PC
     if 'pc' in assignments:
