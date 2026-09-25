@@ -34,16 +34,15 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 600px;
             width: 100%;
             background: rgba(30, 41, 59, 0.7);
-            border-radius: 32px;
-            padding: 30px;
+            border-radius: 20px;
+            padding: 20px;
             box-shadow: var(--clay-shadow);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            margin-top: 10px;
-            margin-bottom: 40px;
+            margin: 10px auto;
             position: relative;
             overflow: hidden;
         }
@@ -76,25 +75,25 @@
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 25px;
             position: relative;
             z-index: 1;
         }
 
         h1 {
             font-weight: 800;
-            font-size: 2.5rem;
+            font-size: 1.8rem;
             margin: 0;
             background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(14, 165, 233, 0.3);
+            text-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
         }
 
         .subtitle {
             color: var(--text-muted);
-            margin-top: 8px;
-            font-size: 1.1rem;
+            margin-top: 5px;
+            font-size: 0.9rem;
         }
 
         .schedule-grid {
@@ -102,18 +101,18 @@
             z-index: 1;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 15px;
         }
 
         /* Day Card */
         .day-card {
             background: #151e2d;
-            border-radius: 24px;
-            padding: 25px;
+            border-radius: 16px;
+            padding: 15px;
             box-shadow: var(--clay-shadow);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
             transition: transform 0.3s ease;
         }
 
@@ -122,31 +121,31 @@
         }
 
         .day-title {
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: var(--text-main);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 12px;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
 
         .day-title::before {
             content: '';
             display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: var(--neon-green);
-            box-shadow: 0 0 10px var(--neon-green);
+            box-shadow: 0 0 8px var(--neon-green);
         }
 
         /* Current Day Highlight */
         .day-card.today {
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            border: 1px solid rgba(16, 185, 129, 0.4);
             background: #1a2536;
         }
         .day-card.today .day-title {
@@ -155,43 +154,43 @@
 
         .table-header {
             display: grid;
-            grid-template-columns: 80px 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: 60px 1fr 1fr;
+            gap: 10px;
             font-weight: 600;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            padding: 0 10px;
-            margin-bottom: 5px;
+            padding: 0 5px;
+            margin-bottom: 2px;
         }
 
         .session-row {
             display: grid;
-            grid-template-columns: 80px 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: 60px 1fr 1fr;
+            gap: 10px;
             align-items: center;
         }
 
         .time-label {
             font-weight: 800;
             color: var(--text-muted);
-            font-size: 1rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
-            padding-left: 10px;
+            padding-left: 5px;
         }
 
         .time-box {
             background: rgba(14, 165, 233, 0.08);
             border: 1px solid rgba(14, 165, 233, 0.2);
-            border-radius: 12px;
-            padding: 12px 15px;
+            border-radius: 8px;
+            padding: 8px 5px;
             text-align: center;
             font-weight: 600;
-            font-size: 1.15rem;
+            font-size: 0.9rem;
             color: var(--neon-blue);
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
             text-shadow: 0 0 10px rgba(14, 165, 233, 0.3);
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         
         .time-box.pc {
@@ -211,31 +210,25 @@
             letter-spacing: normal;
         }
 
-        @media (max-width: 600px) {
-            .container { padding: 20px; }
-            .table-header {
-                grid-template-columns: 60px 1fr 1fr;
-                font-size: 0.75rem;
-                gap: 10px;
-                padding: 0 5px;
-            }
-            .session-row {
-                grid-template-columns: 60px 1fr 1fr;
-                gap: 10px;
+        @media (max-width: 400px) {
+            .container { padding: 15px 10px; }
+            .time-box {
+                font-size: 0.8rem;
+                padding: 6px 2px;
+                letter-spacing: 0;
             }
             .time-label {
-                font-size: 0.85rem;
-                padding-left: 5px;
+                font-size: 0.75rem;
             }
-            .time-box {
-                font-size: 0.95rem;
-                padding: 10px 5px;
-                border-radius: 8px;
+            .table-header {
+                font-size: 0.7rem;
+                grid-template-columns: 50px 1fr 1fr;
             }
-            h1 {
-                font-size: 1.8rem;
+            .session-row {
+                grid-template-columns: 50px 1fr 1fr;
             }
-            .day-card { padding: 15px; }
+            h1 { font-size: 1.5rem; }
+            .day-card { padding: 12px; }
         }
     </style>
 </head>
