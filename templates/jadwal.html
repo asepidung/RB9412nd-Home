@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Internet Harian</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b1120;
+            --surface: #1e293b;
+            --clay-shadow: 
+                -8px -8px 16px rgba(255, 255, 255, 0.03),
+                8px 8px 16px rgba(0, 0, 0, 0.6),
+                inset -2px -2px 6px rgba(0, 0, 0, 0.4),
+                inset 2px 2px 6px rgba(255, 255, 255, 0.1);
+            --neon-blue: #0ea5e9;
+            --neon-purple: #a855f7;
+            --neon-green: #10b981;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 32px;
+            padding: 30px;
+            box-shadow: var(--clay-shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 10px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ambient Glow */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: -100px;
+            width: 300px;
+            height: 300px;
+            background: var(--neon-blue);
+            filter: blur(120px);
+            opacity: 0.2;
+            z-index: 0;
+        }
+        .container::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: var(--neon-purple);
+            filter: blur(120px);
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin: 0;
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(14, 165, 233, 0.3);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-size: 1.1rem;
+        }
+
+        .schedule-grid {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* Day Card */
+        .day-card {
+            background: #151e2d;
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: var(--clay-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .day-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .day-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .day-title::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        /* Current Day Highlight */
+        .day-card.today {
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: #1a2536;
+        }
+        .day-card.today .day-title {
+            color: var(--neon-green);
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 80px 1fr 1fr;
+            gap: 15px;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            padding: 0 10px;
+            margin-bottom: 5px;
+        }
+
+        .session-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .time-label {
+            font-weight: 800;
+            color: var(--text-muted);
+            font-size: 1rem;
+            text-transform: uppercase;
+            padding-left: 10px;
+        }
+
+        .time-box {
+            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 12px;
+            padding: 12px 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.15rem;
+            color: var(--neon-blue);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 0 0 10px rgba(14, 165, 233, 0.3);
+            letter-spacing: 1px;
+        }
+        
+        .time-box.pc {
+            background: rgba(168, 85, 247, 0.08);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            color: var(--neon-purple);
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+        }
+
+        .time-box.empty {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-shadow: none;
+            box-shadow: none;
+            letter-spacing: normal;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .table-header {
+                grid-template-columns: 60px 1fr 1fr;
+                font-size: 0.75rem;
+                gap: 10px;
+                padding: 0 5px;
+            }
+            .session-row {
+                grid-template-columns: 60px 1fr 1fr;
+                gap: 10px;
+            }
+            .time-label {
+                font-size: 0.85rem;
+                padding-left: 5px;
+            }
+            .time-box {
+                font-size: 0.95rem;
+                padding: 10px 5px;
+                border-radius: 8px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .day-card { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Jadwal Internet</h1>
+            <div class="subtitle">Waktu Akses Wi-Fi Harian</div>
+        </div>
+
+        <div class="schedule-grid">
+            {% for day in schedule %}
+            <div class="day-card" id="day-{{ day.hari.lower() }}">
+                <div class="day-title">{{ day.hari }}</div>
+                <div class="table-header">
+                    <div>Waktu</div>
+                    <div style="text-align: center;">📱 HP</div>
+                    <div style="text-align: center;">💻 PC</div>
+                </div>
+                
+                {% for sesi in day.sesi %}
+                <div class="session-row">
+                    <div class="time-label">{{ sesi.nama_sesi }}</div>
+                    <div class="time-box {% if sesi.hp == '-' %}empty{% endif %}">{{ sesi.hp }}</div>
+                    <div class="time-box pc {% if sesi.pc == '-' %}empty{% endif %}">{{ sesi.pc }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        // Highlight hari ini
+        const days = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
+        const today = days[new Date().getDay()];
+        const todayCard = document.getElementById('day-' + today);
+        if (todayCard) {
+            todayCard.classList.add('today');
+        }
+    </script>
+</body>
+</html>

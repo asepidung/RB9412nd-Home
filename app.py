@@ -97,6 +97,52 @@ def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
+@app.route('/jadwal')
+def jadwal_public():
+    templates_list = load_json(TEMPLATES_FILE)
+    templates = {t['id']: t for t in templates_list} if isinstance(templates_list, list) else templates_list
+    assignments = load_json(ASSIGNMENTS_FILE)
+    
+    # Handle legacy assignments format
+    if "mon" in assignments:
+        assignments = {"pc": assignments, "hp": assignments}
+        
+    days = [('mon', 'Senin'), ('tue', 'Selasa'), ('wed', 'Rabu'), ('thu', 'Kamis'), ('fri', 'Jumat'), ('sat', 'Sabtu'), ('sun', 'Minggu')]
+    
+    schedule_data = []
+    for day_code, day_name in days:
+        day_schedule = {"hari": day_name, "sesi": []}
+        
+        hp_tpl_id = assignments.get('hp', {}).get(day_code)
+        pc_tpl_id = assignments.get('pc', {}).get(day_code)
+        
+        hp_sessions = templates.get(hp_tpl_id, {}).get('sessions', []) if hp_tpl_id else []
+        pc_sessions = templates.get(pc_tpl_id, {}).get('sessions', []) if pc_tpl_id else []
+        
+        max_sesi = max(len(hp_sessions), len(pc_sessions), 3)
+        sesi_names = ["Pagi", "Sore", "Malam", "Ekstra 1", "Ekstra 2"]
+        
+        for i in range(max_sesi):
+            s_name = sesi_names[i] if i < len(sesi_names) else f"Sesi {i+1}"
+            
+            hp_time = "-"
+            if i < len(hp_sessions):
+                hp_time = f"{hp_sessions[i]['start']} - {hp_sessions[i]['end']}"
+                
+            pc_time = "-"
+            if i < len(pc_sessions):
+                pc_time = f"{pc_sessions[i]['start']} - {pc_sessions[i]['end']}"
+                
+            day_schedule["sesi"].append({
+                "nama_sesi": s_name,
+                "hp": hp_time,
+                "pc": pc_time
+            })
+            
+        schedule_data.append(day_schedule)
+        
+    return render_template('jadwal.html', schedule=schedule_data)
+
 # --- API Endpoints ---
 
 @app.route('/api/status', methods=['GET', 'POST'])
