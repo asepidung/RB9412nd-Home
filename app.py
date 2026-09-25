@@ -305,7 +305,10 @@ def api_apply():
         if mac.strip():
             cmds.append(f'/ip firewall filter add chain=fizhnetflow src-mac-address={mac.strip()} action=return comment="FizhNetFlow_VIP_Bypass"')
             
-    # 1.7 APPLY VIP GAME BYPASS (Anti-Lag for Mobile Legends)
+    # 1.7 CPU SAVER (Accept established/related to prevent 100% CPU load on hAP lite)
+    cmds.append('/ip firewall filter add chain=fizhnetflow connection-state=established,related action=return comment="FizhNetFlow_CPU_Saver"')
+            
+    # 1.8 APPLY VIP GAME BYPASS (Anti-Lag for Mobile Legends)
     cmds.append('/ip firewall filter add chain=fizhnetflow packet-mark=mlbb_pkt action=return comment="FizhNetFlow_VIP_Game_Bypass"')
 
     # 2. APPLY KILL SWITCHES (Highest Priority)
